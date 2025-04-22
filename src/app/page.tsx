@@ -1,103 +1,127 @@
+import ServicesCard from "@/components/ServicesCard";
+import { Button } from "@/components/ui/button";
+import { Github, Linkedin, Mail } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <div className="flex flex-col flex-wrap items-center justify-center mt-[3rem] mb-[6rem] p-3 w-full max-w-[650px] text-white">
+      <div className="flex justify-between items-center w-full border p-5 rounded border-zinc-800">
+        <div className="mr-20 flex justify-center items-center gap-3 w-full">
+          <div className="">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              src={"/profile.jpeg"}
+              alt="profil fotoğrafı"
+              width={40}
+              height={40}
+              className="relative h-12 w-12 flex  shrink-0 overflow-hidden rounded-full"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
+          <div className="flex flex-col text-start ">
+            <h2 className="font-bold">Doğanay Balaban</h2>
+            <p className="font-thin">Full Stack Web & Mobile Engineer</p>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div className="flex gap-2 justify-center items-center">
+          <Link
+            href={"https://www.linkedin.com/in/doganay-balaban/"}
+            target="_blank"
+          >
+            <Linkedin size={20} />
+          </Link>
+          <Link href={"mailto:balabandoganay@gmail.com"} target="_blank">
+            <Mail size={20} />
+          </Link>
+          <Link href={"https://github.com/DoganayBalaban/"} target="_blank">
+            <Github size={20} />
+          </Link>
+        </div>
+      </div>
+      <div className="flex flex-col gap-2 justify-start items-start p-5 w-full">
+        <div>
+          <h2 className=" text-start text-xl">Currently working 💻</h2>
+        </div>
+        <div
+          data-orientation="horizontal"
+          role="none"
+          className="shrink-0 h-[1px] mt-2 w-full bg-zinc-800"
+        ></div>
+        <div className="flex flex-col justify-center items-start w-full mt-[0.75rem] gap-2">
+          <Link
+            href={"https://kitapp-k9h0.onrender.com/"}
+            className="font-bold"
+            target="_blank"
+          >
+            Kitapp
+          </Link>
+          <p className="font-thin">Book management site</p>
+        </div>
+      </div>
+      <div className="max-w-[700px] mt-[2rem] w-full p-5 ">
+        <div>
+          <h2 className="text-xl">Services ⚙️</h2>
+        </div>
+        <div className="grid grid-cols-2 gap-4 mt-5">
+          <div>
+            <Link href={"mailto:balabandoganay@gmail.com"}>
+              <ServicesCard
+                image=""
+                title="hire me"
+                emoji="👨‍💻"
+                text="i can build your next project."
+              />
+            </Link>
+          </div>
+          <div>
+            <Link href={"mailto:balabandoganay@gmail.com"}>
+              <ServicesCard
+                image=""
+                title="ask me"
+                emoji="💬"
+                text="need advice on your product?"
+              />
+            </Link>
+          </div>
+        </div>
+      </div>
+      <div className="max-w-[700px] mt-[2rem] w-full p-5">
+        <div>
+          <h2 className="text-xl">Projects</h2>
+        </div>
+        <div className="grid grid-cols-2 gap-4 mt-5">
+          <div>
+            <Link href={"https://kitapp-k9h0.onrender.com/"}>
+              <ServicesCard
+                image="/project1.png"
+                title="Kitapp"
+                emoji="📕"
+                text="Manage your books easily."
+              />
+            </Link>
+          </div>
+          <div>
+            <Link href={""}>
+              <ServicesCard
+                image="/project1.png"
+                title="Spotlight"
+                emoji="📱"
+                text="Social media platform for everyone."
+              />
+            </Link>
+          </div>
+          <div>
+            <Link href={"https://chat-app-rk3l.onrender.com/login"}>
+              <ServicesCard
+                image="/project2.png"
+                title="Chatty"
+                emoji="💬"
+                text="Chat with your friends."
+              />
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
