@@ -15,11 +15,11 @@ export default function StarsBackground() {
         fullScreen: { enable: true, zIndex: -1 },
         background: { color: { value: "#000000" } },
         particles: {
-          number: { value: 400 },
+          number: { value: 300 },
           color: { value: "#ffffff" },
           shape: { type: "circle" },
           opacity: { value: 1, random: true },
-          size: { value: 2.5, random: false },
+          size: { value: 2, random: false },
           move: {
             enable: true,
             speed: 5,

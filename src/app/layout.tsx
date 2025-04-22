@@ -1,9 +1,10 @@
 import "./globals.css";
-import StarsBackground from "../components/StarsBackground"; // yolunu ayarla
+import StarsBackground from "../components/StarsBackground";
+import Head from "next/head";
 
 export const metadata = {
   title: "Doğanay Balaban",
-  description: "Kişisel portfolyo sayfam",
+  description: "Doğanay Balaban's Portfolio",
 };
 
 export default function RootLayout({
