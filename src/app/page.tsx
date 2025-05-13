@@ -53,9 +53,9 @@ export default function Home() {
             className="font-bold"
             target="_blank"
           >
-            Kitapp
+            Retouchly
           </Link>
-          <p className="font-thin">Book management site</p>
+          <p className="font-thin">AI productivty app</p>
         </div>
       </div>
       <div className="max-w-[700px] mt-[2rem] w-full p-5 ">
@@ -97,6 +97,16 @@ export default function Home() {
                 title="Kitapp"
                 emoji="📕"
                 text="Manage your books easily."
+              />
+            </Link>
+          </div>
+          <div>
+            <Link href={"https://retouchly-omega.vercel.app/"}>
+              <ServicesCard
+                image="/project3.png"
+                title="Retouchly"
+                emoji="🤖"
+                text="AI productivity app."
               />
             </Link>
           </div>
