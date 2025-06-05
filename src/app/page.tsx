@@ -49,7 +49,7 @@ export default function Home() {
         ></div>
         <div className="flex flex-col justify-center items-start w-full mt-[0.75rem] gap-2">
           <Link
-            href={"https://kitapp-k9h0.onrender.com/"}
+            href={"https://retouchly-omega.vercel.app/"}
             className="font-bold"
             target="_blank"
           >
@@ -91,6 +91,16 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-2 gap-4 mt-5">
           <div>
+            <Link href={"https://retouchly-omega.vercel.app/"}>
+              <ServicesCard
+                image="/project3.png"
+                title="Retouchly"
+                emoji="🤖"
+                text="AI-powered productivity assistant that helps you automate tasks and boost efficiency."
+              />
+            </Link>
+          </div>
+          <div>
             <Link href={"https://kitapp-k9h0.onrender.com/"}>
               <ServicesCard
                 image="/project1.png"
@@ -101,19 +111,9 @@ export default function Home() {
             </Link>
           </div>
           <div>
-            <Link href={"https://retouchly-omega.vercel.app/"}>
-              <ServicesCard
-                image="/project3.png"
-                title="Retouchly"
-                emoji="🤖"
-                text="AI productivity app."
-              />
-            </Link>
-          </div>
-          <div>
             <Link href={""}>
               <ServicesCard
-                image="/project1.png"
+                image=""
                 title="Spotlight"
                 emoji="📱"
                 text="Social media platform for everyone."
@@ -121,7 +121,7 @@ export default function Home() {
             </Link>
           </div>
           <div>
-            <Link href={"https://chat-app-rk3l.onrender.com/login"}>
+            <Link href={"https://chat-app-rk3l.onrender.com"}>
               <ServicesCard
                 image="/project2.png"
                 title="Chatty"
