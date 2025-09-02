@@ -18,32 +18,42 @@ import {
   stripHtml,
   truncateText,
 } from "@/lib/api";
+import { fetchLinkedInUserPosts } from "@/lib/linkedin";
 
-// Mock LinkedIn posts data - LinkedIn API gerektirdiği için mock data kullanıyoruz
-const linkedinPosts = [
-  {
-    id: 1,
-    content:
-      "Yeni projemde Next.js 14'ün App Router özelliklerini kullanarak performans optimizasyonu yaptım. Server Components ile %40 daha hızlı sayfa yükleme süreleri elde ettik! 🚀",
-    publishedAt: "2024-01-20",
-    likes: 67,
-    comments: 8,
-    url: "https://linkedin.com/posts/doganaybalaban_nextjs-performance",
-  },
-  {
-    id: 2,
-    content:
-      "Bugün ekibimizle birlikte GraphQL ve Apollo Client entegrasyonu üzerine workshop düzenledik. Real-time data fetching konusunda harika deneyimler paylaştık. Öğrenmeye devam! 📚",
-    publishedAt: "2024-01-18",
-    likes: 45,
-    comments: 12,
-    url: "https://linkedin.com/posts/doganaybalaban_graphql-apollo",
-  },
-];
+interface LinkedInPost {
+  id: string;
+  text: string;
+  author: {
+    name: string;
+    url: string;
+    avatar?: Array<{
+      url: string;
+      width: number;
+      height: number;
+    }>;
+  };
+  created_at: string;
+  reaction_counts: Array<{
+    type: string;
+    count: number;
+  }>;
+  comment_count: number;
+  content?: {
+    images?: Array<{
+      image: Array<{
+        url: string;
+        width: number;
+        height: number;
+      }>;
+    }>;
+  };
+}
 
 export default function BlogSection() {
   const [mediumPosts, setMediumPosts] = useState<MediumPost[]>([]);
+  const [linkedinPosts, setLinkedinPosts] = useState<LinkedInPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [linkedinLoading, setLinkedinLoading] = useState(true);
 
   useEffect(() => {
     const loadMediumPosts = async () => {
@@ -57,7 +67,21 @@ export default function BlogSection() {
       }
     };
 
+    const loadLinkedInPosts = async () => {
+      try {
+        const response = await fetchLinkedInUserPosts(
+          "ACoAABCtiL8B26nfi3Nbpo_AM8ngg4LeClT1Wh8"
+        );
+        setLinkedinPosts(response.posts?.slice(0, 4) || []);
+      } catch (error) {
+        console.error("Error loading LinkedIn posts:", error);
+      } finally {
+        setLinkedinLoading(false);
+      }
+    };
+
     loadMediumPosts();
+    loadLinkedInPosts();
   }, []);
 
   return (
@@ -187,56 +211,110 @@ export default function BlogSection() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {linkedinPosts.map((post, index) => (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group bg-slate-600 border-slate-500">
-                  <CardHeader>
-                    <div className="flex items-center gap-2 text-sm text-slate-400 mb-2">
-                      <Calendar className="w-4 h-4" />
-                      {new Date(post.publishedAt).toLocaleDateString("tr-TR")}
-                    </div>
-                  </CardHeader>
+          {linkedinLoading ? (
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+              <p className="text-slate-400 mt-4">
+                LinkedIn gönderileri yükleniyor...
+              </p>
+            </div>
+          ) : linkedinPosts.length === 0 ? (
+            <div className="text-center text-slate-400">
+              <p>LinkedIn gönderileri yüklenemedi.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {linkedinPosts.map((post, index) => {
+                const totalReactions = post.reaction_counts.reduce(
+                  (sum, reaction) => sum + reaction.count,
+                  0
+                );
+                const truncatedText =
+                  post.text.length > 200
+                    ? post.text.substring(0, 200) + "..."
+                    : post.text;
 
-                  <CardContent>
-                    <p className="text-white mb-4 leading-relaxed">
-                      {post.content}
-                    </p>
-
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-4 text-sm text-slate-400">
-                        <div className="flex items-center gap-1">
-                          <Heart className="w-4 h-4" />
-                          {post.likes}
+                return (
+                  <motion.div
+                    key={post.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group bg-slate-600 border-slate-500">
+                      <CardHeader>
+                        <div className="flex items-center gap-3 mb-2">
+                          {post.author.avatar && post.author.avatar[0] && (
+                            <img
+                              src={post.author.avatar[0].url}
+                              alt={post.author.name}
+                              className="w-8 h-8 rounded-full"
+                            />
+                          )}
+                          <div>
+                            <p className="text-sm text-white font-medium">
+                              {post.author.name}
+                            </p>
+                            <div className="flex items-center gap-1 text-xs text-slate-400">
+                              <Calendar className="w-3 h-3" />
+                              {new Date(post.created_at).toLocaleDateString(
+                                "tr-TR"
+                              )}
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <MessageCircle className="w-4 h-4" />
-                          {post.comments}
-                        </div>
-                      </div>
-                    </div>
+                      </CardHeader>
 
-                    <Button
-                      variant="outline"
-                      className="w-full group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all border-slate-400 text-slate-300"
-                      asChild
-                    >
-                      <Link href={post.url} target="_blank">
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        LinkedIn'de Gör
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+                      <CardContent>
+                        <p className="text-white mb-4 leading-relaxed">
+                          {truncatedText}
+                        </p>
+
+                        {post.content?.images &&
+                          post.content.images.length > 0 && (
+                            <div className="mb-4 rounded-lg overflow-hidden">
+                              <img
+                                src={post.content.images[0].image[0].url}
+                                alt="Post image"
+                                className="w-full h-48 object-cover"
+                              />
+                            </div>
+                          )}
+
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-4 text-sm text-slate-400">
+                            <div className="flex items-center gap-1">
+                              <Heart className="w-4 h-4" />
+                              {totalReactions}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <MessageCircle className="w-4 h-4" />
+                              {post.comment_count}
+                            </div>
+                          </div>
+                        </div>
+
+                        <Button
+                          variant="outline"
+                          className="w-full group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all border-slate-400 text-slate-300"
+                          asChild
+                        >
+                          <Link
+                            href={`https://www.linkedin.com/feed/update/urn:li:activity:${post.id}/`}
+                            target="_blank"
+                          >
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            LinkedIn'de Gör
+                          </Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
 
           <motion.div
             className="text-center mt-12"
@@ -252,7 +330,7 @@ export default function BlogSection() {
               asChild
             >
               <Link
-                href="https://linkedin.com/in/doganaybalaban"
+                href="https://linkedin.com/in/doganay-balaban"
                 target="_blank"
               >
                 <ExternalLink className="w-5 h-5 mr-2" />
