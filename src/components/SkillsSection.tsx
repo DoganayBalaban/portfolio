@@ -14,7 +14,7 @@ const skillCategories = [
       { name: "Next.js", level: 90 },
       { name: "TypeScript", level: 88 },
       { name: "Tailwind CSS", level: 92 },
-      { name: "Vue.js", level: 75 },
+      { name: "Redux", level: 75 },
       { name: "SASS/SCSS", level: 85 },
     ],
   },
@@ -37,7 +37,7 @@ const skillCategories = [
     color: "from-purple-500 to-pink-500",
     skills: [
       { name: "MongoDB", level: 85 },
-      { name: "PostgreSQL", level: 82 },
+      { name: "PostgreSQL", level: 90 },
       { name: "Redis", level: 75 },
       { name: "Prisma", level: 88 },
       { name: "MySQL", level: 80 },
@@ -64,7 +64,6 @@ const skillCategories = [
     skills: [
       { name: "React Native", level: 80 },
       { name: "Expo", level: 85 },
-      { name: "Flutter", level: 60 },
       { name: "PWA", level: 88 },
     ],
   },
@@ -84,7 +83,7 @@ const skillCategories = [
 
 export default function SkillsSection() {
   return (
-    <section id="skills" className="py-20 bg-slate-700">
+    <section id="skills" className="py-20 bg-slate-900">
       <div className="container mx-auto px-6">
         <motion.div
           className="text-center mb-16"
@@ -165,71 +164,6 @@ export default function SkillsSection() {
             </motion.div>
           ))}
         </div>
-
-        {/* Sertifikalar ve Başarılar */}
-        <motion.div
-          className="mt-20"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          <h3 className="text-3xl font-bold text-white text-center mb-12">
-            Sertifikalar & Başarılar
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                title: "AWS Certified Developer",
-                issuer: "Amazon Web Services",
-                year: "2023",
-                color: "from-orange-400 to-orange-600",
-              },
-              {
-                title: "React Developer Certification",
-                issuer: "Meta",
-                year: "2023",
-                color: "from-blue-400 to-blue-600",
-              },
-              {
-                title: "Node.js Application Developer",
-                issuer: "OpenJS Foundation",
-                year: "2022",
-                color: "from-green-400 to-green-600",
-              },
-              {
-                title: "TypeScript Expert",
-                issuer: "Microsoft",
-                year: "2022",
-                color: "from-blue-500 to-indigo-600",
-              },
-            ].map((cert, index) => (
-              <motion.div
-                key={cert.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Card className="text-center hover:shadow-lg transition-all duration-300 bg-slate-700 border-slate-600">
-                  <CardContent className="p-6">
-                    <div
-                      className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${cert.color} flex items-center justify-center`}
-                    >
-                      <Code className="w-8 h-8 text-white" />
-                    </div>
-                    <h4 className="font-semibold text-white mb-2">
-                      {cert.title}
-                    </h4>
-                    <p className="text-sm text-slate-400 mb-1">{cert.issuer}</p>
-                    <p className="text-xs text-slate-500">{cert.year}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
       </div>
     </section>
   );

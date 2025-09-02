@@ -61,7 +61,7 @@ export default function BlogSection() {
   }, []);
 
   return (
-    <section id="blog" className="py-20 bg-slate-800">
+    <section id="blog" className="py-20 bg-slate-900">
       <div className="container mx-auto px-6">
         {/* Medium Blog Posts */}
         <motion.div

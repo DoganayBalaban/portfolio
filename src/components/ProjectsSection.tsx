@@ -42,7 +42,7 @@ export default function ProjectsSection() {
 
   if (loading) {
     return (
-      <section id="projects" className="py-20 bg-slate-800">
+      <section id="projects" className="py-20 bg-slate-900">
         <div className="container mx-auto px-6">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
@@ -56,7 +56,7 @@ export default function ProjectsSection() {
   }
 
   return (
-    <section id="projects" className="py-20 bg-slate-800">
+    <section id="projects" className="py-20 bg-slate-900">
       <div className="container mx-auto px-6">
         <motion.div
           className="text-center mb-16"
