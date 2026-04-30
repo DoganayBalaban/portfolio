@@ -1,17 +1,31 @@
+import type { Metadata } from "next";
+import { DM_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 
-export const metadata = {
-  title: "Doğanay Balaban - Fullstack Developer",
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  weight: ["300", "400", "500", "600"],
+});
+
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  variable: "--font-dm-mono",
+  weight: ["400", "500"],
+});
+
+export const metadata: Metadata = {
+  title: "Doğanay Balaban — Full Stack Developer",
   description:
-    "Modern web teknolojileri ile kullanıcı deneyimini ön planda tutan, ölçeklenebilir ve performanslı uygulamalar geliştiren fullstack developer. React, Node.js, TypeScript uzmanı.",
+    "Üretim kalitesinde SaaS platformları, AI destekli uygulamalar ve gerçek zamanlı sistemler geliştiren Full-Stack Software Engineer.",
   keywords:
-    "fullstack developer, react, nodejs, typescript, web development, javascript, frontend, backend",
+    "full stack developer, next.js, typescript, node.js, react, ai, llm, backend",
   authors: [{ name: "Doğanay Balaban" }],
   creator: "Doğanay Balaban",
   openGraph: {
-    title: "Doğanay Balaban - Fullstack Developer",
+    title: "Doğanay Balaban — Full Stack Developer",
     description:
-      "Modern web teknolojileri ile kullanıcı deneyimini ön planda tutan fullstack developer",
+      "Full-Stack Software Engineer. Next.js, Node.js, TypeScript, AI/LLM.",
     url: "https://doganaybalaban.com",
     siteName: "Doğanay Balaban Portfolio",
     locale: "tr_TR",
@@ -19,15 +33,11 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Doğanay Balaban - Fullstack Developer",
-    description:
-      "Modern web teknolojileri ile kullanıcı deneyimini ön planda tutan fullstack developer",
+    title: "Doğanay Balaban — Full Stack Developer",
+    description: "Full-Stack Software Engineer. Next.js, Node.js, TypeScript, AI/LLM.",
     creator: "@doganaybalaban",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -36,10 +46,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="tr" className="dark scroll-smooth">
-      <body className="antialiased dark">
-        <main className="relative">{children}</main>
-      </body>
+    <html lang="tr" className={`${dmSans.variable} ${dmMono.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }

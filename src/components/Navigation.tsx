@@ -1,99 +1,176 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
-import Link from "next/link";
+import { useLang } from "@/context/LangContext";
+import type { Lang } from "@/data/portfolio";
+import { DATA } from "@/data/portfolio";
 import { useEffect, useState } from "react";
 
-const navItems = [
-  { name: "Ana Sayfa", href: "#home" },
-  { name: "Yetenekler", href: "#skills" },
-  { name: "Projeler", href: "#projects" },
-  { name: "Blog", href: "#blog" },
-  { name: "İletişim", href: "#contact" },
-];
-
-export default function Navigation() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+export default function Navigation({ onSearch }: { onSearch: () => void }) {
+  const { lang, setLang, t } = useLang();
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const fn = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
   }, []);
 
+  const links: [string, string][] = [
+    [t.navAbout, "#about"],
+    [t.navProjects, "#projects"],
+    [t.navSkills, "#skills"],
+    [t.navExp, "#experience"],
+    [t.navEdu, "#education"],
+    [t.navBlog, "#blog"],
+  ];
+
   return (
-    <motion.nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-slate-900/90 backdrop-blur-lg shadow-lg border-b border-slate-700"
-          : "bg-transparent"
-      }`}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.8 }}
+    <nav
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        padding: "0 40px",
+        height: "58px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        background: scrolled ? "rgba(249,248,246,0.92)" : "transparent",
+        backdropFilter: scrolled ? "blur(16px)" : "none",
+        borderBottom: scrolled
+          ? "1px solid var(--border)"
+          : "1px solid transparent",
+        transition: "all 0.3s ease",
+      }}
     >
-      <div className="container mx-auto px-6">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link
-            href="#home"
-            className="text-2xl font-bold text-white transition-colors"
-          >
-            DB
-          </Link>
+      <a
+        href="#"
+        style={{
+          fontFamily: "var(--font-dm-mono), monospace",
+          fontSize: "13px",
+          color: "var(--fg)",
+          textDecoration: "none",
+          fontWeight: 500,
+        }}
+      >
+        db<span style={{ color: "var(--accent)" }}>.</span>
+      </a>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
+      <div
+        className="nav-links"
+        style={{ display: "flex", gap: "24px", alignItems: "center" }}
+      >
+        {links.map(([label, href]) => (
+          <NavLink key={href} href={href}>
+            {label}
+          </NavLink>
+        ))}
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 rounded-lg text-white transition-colors"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
-        </div>
+        <button
+          onClick={onSearch}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "7px",
+            padding: "5px 12px",
+            borderRadius: "7px",
+            border: "1px solid var(--border2)",
+            background: "transparent",
+            color: "var(--fg3)",
+            fontFamily: "var(--font-dm-mono), monospace",
+            fontSize: "11px",
+            transition: "all 0.18s",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "var(--bg2)";
+            e.currentTarget.style.color = "var(--fg)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "var(--fg3)";
+          }}
+        >
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+            <circle
+              cx="6"
+              cy="6"
+              r="4.5"
+              stroke="currentColor"
+              strokeWidth="1.4"
+            />
+            <path
+              d="M9.5 9.5L13 13"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
 
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <motion.div
-            className="md:hidden bg-slate-800/95 backdrop-blur-lg rounded-lg mt-2 p-4 shadow-lg border border-slate-700"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="block py-2 text-white hover:text-blue-400 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </motion.div>
-        )}
+        <a
+          href={`mailto:${DATA.email}`}
+          style={{
+            padding: "6px 16px",
+            borderRadius: "8px",
+            fontSize: "13px",
+            textDecoration: "none",
+            background: "var(--fg)",
+            color: "var(--bg)",
+            fontWeight: 500,
+            transition: "opacity 0.2s",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.82")}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+        >
+          {t.navContact}
+        </a>
+
+        <button
+          onClick={() => setLang((lang === "tr" ? "en" : "tr") as Lang)}
+          style={{
+            padding: "5px 12px",
+            borderRadius: "7px",
+            border: "1px solid var(--border2)",
+            background: "transparent",
+            color: "var(--fg2)",
+            fontFamily: "var(--font-dm-mono), monospace",
+            fontSize: "11px",
+            letterSpacing: "0.06em",
+            transition: "all 0.18s",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "var(--bg2)";
+            e.currentTarget.style.color = "var(--fg)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "var(--fg2)";
+          }}
+        >
+          {lang === "tr" ? "EN" : "TR"}
+        </button>
       </div>
-    </motion.nav>
+    </nav>
+  );
+}
+
+function NavLink({ href, children }: { href: string; children: string }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <a
+      href={href}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        fontSize: "13px",
+        color: hov ? "var(--fg)" : "var(--fg2)",
+        textDecoration: "none",
+        transition: "color 0.18s",
+      }}
+    >
+      {children}
+    </a>
   );
 }

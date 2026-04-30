@@ -1,198 +1,277 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Download, Github, Linkedin, Mail, MapPin } from "lucide-react";
-import Link from "next/link";
-import { Button } from "./ui/button";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { DATA } from "@/data/portfolio";
+import { useLang } from "@/context/LangContext";
+import { useTypewriter } from "@/hooks/useTypewriter";
+
+const TECH_BADGES = [
+  { label: "Next.js",    icon: "nextdotjs",   color: "000000" },
+  { label: "TypeScript", icon: "typescript",  color: "3178C6" },
+  { label: "Node.js",    icon: "nodedotjs",   color: "339933" },
+  { label: "PostgreSQL", icon: "postgresql",  color: "4169E1" },
+  { label: "Docker",     icon: "docker",      color: "2496ED" },
+  { label: "Python",     icon: "python",      color: "3776AB" },
+  { label: "Redis",      icon: "redis",       color: "FF4438" },
+  { label: "LangChain",  icon: "langchain",   color: "1C3C3C" },
+];
 
 export default function HeroSection() {
-  const handleDownloadCV = () => {
-    const link = document.createElement("a");
-    link.href = "/cv.pdf";
-    link.download = "Doganay_Balaban_CV.pdf";
-    link.click();
-  };
+  const { lang, t } = useLang();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 80);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const typed = useTypewriter(
+    lang === "tr"
+      ? ["Full Stack Developer", "LLM Entegrasyon Uzmanı", "Backend Engineer", "Next.js Geliştiricisi"]
+      : ["Full Stack Developer", "LLM Integration Engineer", "Backend Engineer", "Next.js Developer"],
+    70
+  );
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-slate-900 relative overflow-hidden border-b border-slate-700">
-      {/* Animated background particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -inset-10 opacity-30">
-          {[...Array(50)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute bg-blue-500 rounded-full"
+    <section
+      id="about"
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        padding: "100px 40px 60px",
+        maxWidth: "calc(var(--max) + 80px)",
+        margin: "0 auto",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: "80px", width: "100%", flexWrap: "wrap" }}>
+        {/* Text side */}
+        <div style={{ flex: "1 1 360px", minWidth: 0 }}>
+          <h1
+            style={{
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? "translateY(0)" : "translateY(20px)",
+              transition: "all 0.6s ease 0.1s",
+              fontSize: "clamp(36px, 6vw, 68px)",
+              fontWeight: 600,
+              lineHeight: 1.07,
+              letterSpacing: "-0.04em",
+              marginBottom: "14px",
+              color: "var(--fg)",
+            }}
+          >
+            {DATA.name}
+          </h1>
+
+          <div
+            style={{
+              opacity: mounted ? 1 : 0,
+              transition: "opacity 0.6s ease 0.3s",
+              fontFamily: "var(--font-dm-mono), monospace",
+              fontSize: "15px",
+              color: "var(--accent)",
+              marginBottom: "24px",
+              display: "flex",
+              alignItems: "center",
+              gap: "3px",
+              height: "24px",
+            }}
+          >
+            <span>{typed}</span>
+            <span style={{ animation: "blink 1s infinite" }}>|</span>
+          </div>
+
+          <p
+            style={{
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? "translateY(0)" : "translateY(12px)",
+              transition: "all 0.6s ease 0.4s",
+              maxWidth: "460px",
+              color: "var(--fg2)",
+              fontSize: "15px",
+              lineHeight: 1.75,
+              marginBottom: "40px",
+            }}
+          >
+            {t.bio}
+          </p>
+
+          <div
+            style={{
+              opacity: mounted ? 1 : 0,
+              transition: "opacity 0.6s ease 0.55s",
+              display: "flex",
+              gap: "10px",
+              flexWrap: "wrap",
+            }}
+          >
+            <HeroBtn href="#projects" primary>{t.heroCtaProjects}</HeroBtn>
+            <CVButton />
+            <HeroBtn href={DATA.github} external>GitHub</HeroBtn>
+            <HeroBtn href={DATA.linkedin} external>LinkedIn</HeroBtn>
+          </div>
+
+          <div style={{ opacity: mounted ? 1 : 0, transition: "opacity 0.6s ease 0.7s" }}>
+            <TechBadges />
+          </div>
+        </div>
+
+        {/* Photo */}
+        <div style={{ opacity: mounted ? 1 : 0, transition: "opacity 0.7s ease 0.3s", flexShrink: 0 }}>
+          <div
+            style={{
+              width: "260px",
+              height: "320px",
+              borderRadius: "20px",
+              overflow: "hidden",
+              border: "1px solid var(--border2)",
+              boxShadow: "0 24px 64px rgba(26,25,22,0.10)",
+            }}
+          >
+            <Image
+              src={DATA.photo}
+              alt="Doğanay Balaban"
+              width={260}
+              height={320}
+              priority
               style={{
-                width: Math.random() * 4 + 1,
-                height: Math.random() * 4 + 1,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                y: [0, -30, 0],
-                opacity: [0, 1, 0],
-              }}
-              transition={{
-                duration: Math.random() * 3 + 2,
-                repeat: Infinity,
-                delay: Math.random() * 2,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center top",
+                display: "block",
               }}
             />
-          ))}
+          </div>
         </div>
       </div>
-
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
-          {/* Sol taraf - Profil bilgileri */}
-          <motion.div
-            className="flex-1 text-center lg:text-left"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <motion.h1
-              className="text-5xl lg:text-7xl font-bold text-white mb-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              Doğanay{" "}
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Balaban
-              </span>
-            </motion.h1>
-
-            <motion.h2
-              className="text-2xl lg:text-3xl text-slate-300 mb-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              Fullstack Developer
-            </motion.h2>
-
-            <motion.p
-              className="text-lg text-slate-400 mb-8 max-w-2xl"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-            >
-              Modern web teknolojileri ile kullanıcı deneyimini ön planda tutan,
-              ölçeklenebilir ve performanslı uygulamalar geliştiren bir yazılım
-              geliştiricisiyim. React, Node.js, TypeScript ve cloud
-              teknolojilerinde kendimi geliştiriyorum.
-            </motion.p>
-
-            <motion.div
-              className="flex items-center justify-center lg:justify-start gap-2 text-slate-400 mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-            >
-              <MapPin className="w-5 h-5" />
-              <span>İstanbul, Türkiye</span>
-            </motion.div>
-
-            {/* CTA Buttons */}
-            <motion.div
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1 }}
-            >
-              <Button
-                onClick={handleDownloadCV}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-105"
-              >
-                <Download className="w-5 h-5 mr-2" />
-                CV İndir
-              </Button>
-
-              <Button
-                variant="outline"
-                className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white px-8 py-3 rounded-full text-lg font-semibold transition-all duration-300"
-                asChild
-              >
-                <Link href="#contact">
-                  <Mail className="w-5 h-5 mr-2" />
-                  İletişime Geç
-                </Link>
-              </Button>
-            </motion.div>
-
-            {/* Social Links */}
-            <motion.div
-              className="flex gap-6 justify-center lg:justify-start"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.2 }}
-            >
-              {[
-                {
-                  icon: Github,
-                  href: "https://github.com/doganaybalaban",
-                  color: "hover:text-white",
-                },
-                {
-                  icon: Linkedin,
-                  href: "https://linkedin.com/in/doganay-balaban",
-                  color: "hover:text-blue-400",
-                },
-                {
-                  icon: Mail,
-                  href: "mailto:balabandoganay@gmail.com",
-                  color: "hover:text-red-400",
-                },
-              ].map(({ icon: Icon, href, color }, index) => (
-                <Link
-                  key={index}
-                  href={href}
-                  target={href.startsWith("mailto") ? undefined : "_blank"}
-                  className={`text-slate-400 ${color} transition-all duration-300 hover:scale-110`}
-                >
-                  <Icon className="w-8 h-8" />
-                </Link>
-              ))}
-            </motion.div>
-          </motion.div>
-
-          {/* Sağ taraf - Profil fotoğrafı */}
-          <motion.div
-            className="flex-1 flex justify-center lg:justify-end"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            <div className="relative">
-              <motion.div
-                className="w-80 h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden border-4 border-blue-400 shadow-2xl hover-lift"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center text-white text-6xl font-bold">
-                  DB
-                </div>
-              </motion.div>
-
-              {/* Decorative elements */}
-              <motion.div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-20 animate-spin-slow" />
-              <motion.div
-                className="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-20"
-                animate={{ rotate: -360 }}
-                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-              />
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Scroll Indicator */}
-      <motion.div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-float">
-        <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse-slow"></div>
-        </div>
-      </motion.div>
     </section>
+  );
+}
+
+function HeroBtn({
+  href,
+  children,
+  primary,
+  external,
+}: {
+  href: string;
+  children: string;
+  primary?: boolean;
+  external?: boolean;
+}) {
+  const [hov, setHov] = useState(false);
+  return (
+    <a
+      href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        padding: "10px 22px",
+        borderRadius: "9px",
+        textDecoration: "none",
+        fontSize: "14px",
+        fontWeight: 500,
+        transition: "all 0.2s",
+        display: "inline-block",
+        ...(primary
+          ? { background: hov ? "#3730a3" : "var(--fg)", color: "var(--bg)" }
+          : {
+              background: hov ? "var(--bg3)" : "var(--bg2)",
+              color: "var(--fg)",
+              border: "1px solid var(--border2)",
+            }),
+      }}
+    >
+      {children}
+    </a>
+  );
+}
+
+function CVButton() {
+  const { t } = useLang();
+  const [hov, setHov] = useState(false);
+  return (
+    <a
+      href={DATA.cvUrl}
+      download
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        padding: "10px 22px",
+        borderRadius: "9px",
+        textDecoration: "none",
+        fontSize: "14px",
+        fontWeight: 500,
+        transition: "all 0.2s",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "7px",
+        background: hov ? "var(--accent-light)" : "var(--bg2)",
+        color: hov ? "var(--accent)" : "var(--fg)",
+        border: `1px solid ${hov ? "rgba(79,70,229,0.25)" : "var(--border2)"}`,
+      }}
+    >
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path
+          d="M7 1v8M4 6l3 3 3-3M2 11h10"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      {t.heroCtaCV}
+    </a>
+  );
+}
+
+function TechBadges() {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "7px", marginTop: "20px" }}>
+      {TECH_BADGES.map((b) => (
+        <BadgePill key={b.label} {...b} />
+      ))}
+    </div>
+  );
+}
+
+function BadgePill({ label, icon, color }: { label: string; icon: string; color: string }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <span
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "6px",
+        padding: "5px 11px",
+        borderRadius: "7px",
+        fontSize: "11px",
+        fontFamily: "var(--font-dm-mono), monospace",
+        cursor: "default",
+        transition: "all 0.18s",
+        background: hov ? `#${color}18` : "var(--bg3)",
+        border: `1px solid ${hov ? `#${color}50` : "var(--border)"}`,
+        color: hov ? `#${color}` : "var(--fg2)",
+        transform: hov ? "translateY(-1px)" : "translateY(0)",
+        boxShadow: hov ? `0 4px 12px #${color}20` : "none",
+      }}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={`https://cdn.simpleicons.org/${icon}/${hov ? color : "aaa89f"}`}
+        alt={label}
+        width={12}
+        height={12}
+        style={{ display: "block", flexShrink: 0 }}
+        onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+      />
+      {label}
+    </span>
   );
 }

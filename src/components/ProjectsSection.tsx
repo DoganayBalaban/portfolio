@@ -1,203 +1,244 @@
 "use client";
 
-import { motion } from "framer-motion";
-import {
-  ExternalLink,
-  Github,
-  Star,
-  GitFork,
-  Code,
-  Calendar,
-} from "lucide-react";
-import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
-import { Button } from "./ui/button";
-import { useEffect, useState } from "react";
-import { fetchGitHubRepos, GitHubRepo, getTechColor } from "@/lib/api";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+import { DATA } from "@/data/portfolio";
+import { useLang } from "@/context/LangContext";
+import { Reveal, SectionLabel, Tag, ExtLink } from "./Primitives";
+
+type Project = (typeof DATA.projects)[0];
+type TProject = { subtitle: string; desc: string; longDesc: string; highlights: readonly string[] };
 
 export default function ProjectsSection() {
-  const [repos, setRepos] = useState<GitHubRepo[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadRepos = async () => {
-      try {
-        const githubRepos = await fetchGitHubRepos("DoganayBalaban");
-        setRepos(githubRepos);
-      } catch (error) {
-        console.error("Error loading repos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadRepos();
-  }, []);
-
-  if (loading) {
-    return (
-      <section id="projects" className="py-20 bg-slate-900">
-        <div className="container mx-auto px-6">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-            <p className="text-slate-400 mt-4">
-              GitHub projelerim yükleniyor...
-            </p>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const { t } = useLang();
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
 
   return (
-    <section id="projects" className="py-20 bg-slate-900">
-      <div className="container mx-auto px-6">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
+    <section
+      id="projects"
+      style={{ padding: "100px 40px", maxWidth: "calc(var(--max) + 80px)", margin: "0 auto" }}
+    >
+      <Reveal>
+        <SectionLabel num="01">{t.secProjects}</SectionLabel>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+            gap: "16px",
+          }}
         >
-          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
-            GitHub Projelerim
-          </h2>
-          <p className="text-xl text-slate-400 max-w-3xl mx-auto">
-            GitHub'da geliştirdiğim açık kaynak projeler ve kişisel çalışmalarım
-          </p>
-        </motion.div>
-
-        {repos.length === 0 ? (
-          <div className="text-center text-slate-400">
-            <p>Henüz proje bulunamadı.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {repos.map((repo, index) => (
-              <motion.div
-                key={repo.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Card className="h-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group bg-slate-700 border-slate-600">
-                  <div className="relative overflow-hidden rounded-t-lg">
-                    <div className="w-full h-48 bg-slate-600 flex items-center justify-center relative">
-                      <Code className="w-16 h-16 text-slate-400" />
-                      {repo.language && (
-                        <div
-                          className={`absolute top-4 right-4 bg-gradient-to-r ${getTechColor(
-                            repo.language
-                          )} text-white px-3 py-1 rounded-full text-sm font-semibold`}
-                        >
-                          {repo.language}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
-                        {repo.name}
-                      </CardTitle>
-                      <div className="flex items-center gap-4 text-sm text-slate-400">
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4" />
-                          {repo.stargazers_count}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <GitFork className="w-4 h-4" />
-                          {repo.forks_count}
-                        </div>
-                      </div>
-                    </div>
-                    <CardDescription className="text-slate-300">
-                      {repo.description || "Açıklama bulunmuyor"}
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent>
-                    <div className="flex items-center gap-2 text-sm text-slate-400 mb-4">
-                      <Calendar className="w-4 h-4" />
-                      <span>
-                        Son güncelleme:{" "}
-                        {new Date(repo.updated_at).toLocaleDateString("tr-TR")}
-                      </span>
-                    </div>
-
-                    {repo.topics && repo.topics.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {repo.topics.slice(0, 4).map((topic) => (
-                          <span
-                            key={topic}
-                            className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm font-medium border border-blue-500/30"
-                          >
-                            {topic}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="flex gap-3">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 border-slate-500 text-slate-300 hover:bg-slate-600"
-                        asChild
-                      >
-                        <Link href={repo.html_url} target="_blank">
-                          <Github className="w-4 h-4 mr-2" />
-                          Kod
-                        </Link>
-                      </Button>
-                      {repo.homepage && (
-                        <Button
-                          size="sm"
-                          className="flex-1 bg-blue-600 hover:bg-blue-700"
-                          asChild
-                        >
-                          <Link href={repo.homepage} target="_blank">
-                            <ExternalLink className="w-4 h-4 mr-2" />
-                            Demo
-                          </Link>
-                        </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        )}
-
-        <motion.div
-          className="text-center mt-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          <Button
-            variant="outline"
-            size="lg"
-            className="border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white"
-            asChild
-          >
-            <Link href="https://github.com/DoganayBalaban" target="_blank">
-              <Github className="w-5 h-5 mr-2" />
-              Tüm Projeleri GitHub'da Gör
-            </Link>
-          </Button>
-        </motion.div>
-      </div>
+          {DATA.projects.map((p, i) => (
+            <ProjectCard key={i} p={p} tProj={t.projects[i]} onClick={() => setSelectedIdx(i)} />
+          ))}
+        </div>
+      </Reveal>
+      {selectedIdx !== null && (
+        <ProjectModal
+          project={DATA.projects[selectedIdx]}
+          tProj={t.projects[selectedIdx]}
+          onClose={() => setSelectedIdx(null)}
+        />
+      )}
     </section>
+  );
+}
+
+function ProjectCard({ p, tProj, onClick }: { p: Project; tProj: TProject; onClick: () => void }) {
+  const { t } = useLang();
+  const [hov, setHov] = useState(false);
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        padding: "28px",
+        borderRadius: "var(--radius)",
+        cursor: "pointer",
+        background: hov ? "#fff" : "var(--bg2)",
+        border: `1px solid ${hov ? "rgba(79,70,229,0.2)" : "var(--border)"}`,
+        transition: "all 0.22s ease",
+        transform: hov ? "translateY(-3px)" : "translateY(0)",
+        boxShadow: hov ? "0 12px 40px rgba(26,25,22,0.08)" : "none",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {hov && (
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "var(--accent)" }} />
+      )}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+        <div>
+          <div style={{ fontSize: "11px", fontFamily: "var(--font-dm-mono), monospace", color: "var(--fg3)", marginBottom: "4px", letterSpacing: "0.05em" }}>
+            {tProj.subtitle}
+          </div>
+          <h3 style={{ fontSize: "15px", fontWeight: 600, letterSpacing: "-0.01em" }}>{p.title}</h3>
+        </div>
+        <span
+          style={{
+            fontSize: "10px",
+            padding: "2px 8px",
+            borderRadius: "20px",
+            fontFamily: "var(--font-dm-mono), monospace",
+            whiteSpace: "nowrap",
+            flexShrink: 0,
+            marginLeft: "10px",
+            ...(p.status === "live"
+              ? { background: "#dcfce7", color: "#166534", border: "1px solid #bbf7d0" }
+              : { background: "#fef9c3", color: "#854d0e", border: "1px solid #fde68a" }),
+          }}
+        >
+          {p.status === "live" ? t.liveSmall : t.wipSmall}
+        </span>
+      </div>
+
+      <p style={{ fontSize: "13px", color: "var(--fg2)", lineHeight: 1.65, marginBottom: "20px" }}>
+        {tProj.desc}
+      </p>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+          {p.tags.slice(0, 3).map((tag) => <Tag key={tag}>{tag}</Tag>)}
+          {p.tags.length > 3 && <Tag>+{p.tags.length - 3}</Tag>}
+        </div>
+        <div style={{ display: "flex", gap: "6px", alignItems: "center", flexWrap: "wrap" }}>
+          {p.github && <ExtLink href={p.github} icon="github">GitHub</ExtLink>}
+          {p.demo && <ExtLink href={p.demo}>Demo</ExtLink>}
+          <span
+            style={{
+              fontSize: "12px",
+              color: hov ? "var(--accent)" : "var(--fg3)",
+              transition: "color 0.2s",
+              fontFamily: "var(--font-dm-mono), monospace",
+              marginLeft: "auto",
+            }}
+          >
+            Detay →
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProjectModal({ project, tProj, onClose }: { project: Project; tProj: TProject; onClose: () => void }) {
+  const { t } = useLang();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    const fn = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", fn);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", fn);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  if (!mounted) return null;
+  return createPortal(
+    <div className="project-modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="project-modal-panel">
+        {/* Header */}
+        <div
+          style={{
+            padding: "32px 32px 24px",
+            borderBottom: "1px solid var(--border)",
+            position: "sticky",
+            top: 0,
+            background: "var(--bg)",
+            zIndex: 10,
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div>
+              <div style={{ fontSize: "11px", fontFamily: "var(--font-dm-mono), monospace", color: "var(--fg3)", letterSpacing: "0.1em", marginBottom: "6px" }}>
+                {tProj.subtitle}
+              </div>
+              <h2 style={{ fontSize: "24px", fontWeight: 600, letterSpacing: "-0.03em" }}>{project.title}</h2>
+            </div>
+            <button
+              onClick={onClose}
+              style={{
+                background: "var(--bg2)",
+                border: "1px solid var(--border)",
+                borderRadius: "8px",
+                width: "36px",
+                height: "36px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+                fontSize: "18px",
+                color: "var(--fg2)",
+                transition: "all 0.15s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg3)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "var(--bg2)")}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div style={{ padding: "32px", flex: 1 }}>
+          <div style={{ display: "flex", gap: "8px", marginBottom: "28px", flexWrap: "wrap" }}>
+            <span
+              style={{
+                fontSize: "11px",
+                padding: "3px 10px",
+                borderRadius: "20px",
+                fontFamily: "var(--font-dm-mono), monospace",
+                ...(project.status === "live"
+                  ? { background: "#dcfce7", color: "#166534", border: "1px solid #bbf7d0" }
+                  : { background: "#fef9c3", color: "#854d0e", border: "1px solid #fde68a" }),
+              }}
+            >
+              {project.status === "live" ? t.live : t.wip}
+            </span>
+            {project.demo && (
+              <a href={project.demo} target="_blank" rel="noopener noreferrer" style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", fontFamily: "var(--font-dm-mono), monospace", background: "var(--accent-light)", color: "var(--accent)", border: "1px solid rgba(79,70,229,0.2)", textDecoration: "none" }}>
+                Demo →
+              </a>
+            )}
+            {project.github && (
+              <a href={project.github} target="_blank" rel="noopener noreferrer" style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", fontFamily: "var(--font-dm-mono), monospace", background: "var(--bg2)", color: "var(--fg2)", border: "1px solid var(--border)", textDecoration: "none" }}>
+                GitHub →
+              </a>
+            )}
+          </div>
+
+          <p style={{ fontSize: "15px", color: "var(--fg2)", lineHeight: 1.8, marginBottom: "32px" }}>
+            {tProj.longDesc}
+          </p>
+
+          <div style={{ marginBottom: "32px" }}>
+            <h4 style={{ fontSize: "12px", fontFamily: "var(--font-dm-mono), monospace", color: "var(--fg3)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "14px" }}>
+              {t.highlights}
+            </h4>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {tProj.highlights.map((h, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--accent)", flexShrink: 0 }} />
+                  <span style={{ fontSize: "14px", color: "var(--fg)" }}>{h}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h4 style={{ fontSize: "12px", fontFamily: "var(--font-dm-mono), monospace", color: "var(--fg3)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "14px" }}>
+              {t.techStack}
+            </h4>
+            <div style={{ display: "flex", gap: "7px", flexWrap: "wrap" }}>
+              {project.tags.map((tag) => <Tag key={tag} accent>{tag}</Tag>)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
   );
 }
